@@ -7,11 +7,11 @@ pub struct JsonManifest {
     pub port: String
 }
 
-enum JsonManifestError {
+pub enum JsonManifestError {
     MalformedJson
 }
 
-fn read_manifest_json(json_string: &str) -> Result<JsonManifest, JsonManifestError> {
+pub fn read_manifest_json(json_string: &str) -> Result<JsonManifest, JsonManifestError> {
     serde_json::from_str(json_string)
         .and_then(|data: JsonManifest| Ok(data))
         .map_err(|_| JsonManifestError::MalformedJson)
