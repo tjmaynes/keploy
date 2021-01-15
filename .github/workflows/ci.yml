@@ -6,6 +6,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable 
+            override: true
+            profile: minimal
       - name: Cache rust dependencies
         uses: Swatinem/rust-cache@v1
       - name: 🔨 Install Dependencies 🔨

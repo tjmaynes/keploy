@@ -3,3 +3,6 @@ install_dependencies:
 
 test: install_dependencies
 	cargo test
+
+deploy:
+	@ echo "Coming soon!"
