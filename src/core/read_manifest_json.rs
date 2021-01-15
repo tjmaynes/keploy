@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Serialize, Deserialize)]
 pub struct JsonManifest {
@@ -7,12 +8,18 @@ pub struct JsonManifest {
     pub port: String
 }
 
+impl fmt::Display for JsonManifest {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_fmt(format_args!("JsonManifest(name=\"{}\", image=\"{}\", port=\"{}\")", self.name, self.image, self.port))
+    }
+}
+
 pub enum JsonManifestError {
     MalformedJson
 }
 
-pub fn read_manifest_json(json_string: &str) -> Result<JsonManifest, JsonManifestError> {
-    serde_json::from_str(json_string)
+pub fn read_manifest_json(json_string: String) -> Result<JsonManifest, JsonManifestError> {
+    serde_json::from_str(&*json_string)
         .and_then(|data: JsonManifest| Ok(data))
         .map_err(|_| JsonManifestError::MalformedJson)
 }
@@ -28,7 +35,7 @@ mod tests {
             "name": "some-service",
             "image": "docker.io/ddubson/my-website:0.1.0",
             "port": "8080"
-        }"#) {
+        }"#.to_string()) {
             Ok(result) => {
                 assert_eq!(result.name, "some-service");
                 assert_eq!(result.image, "docker.io/ddubson/my-website:0.1.0");
@@ -45,7 +52,7 @@ mod tests {
             "name": "some-service"
             "image": "docker.io/ddubson/my-website:0.1.0"
             "port": "8080
-        }"#) {
+        }"#.to_string()) {
             Ok(_) => { assert!(false, "Should be invalid json!") }
             Err(error) => { assert!(matches!(error, JsonManifestError::MalformedJson)) }
         }

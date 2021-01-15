@@ -4,13 +4,12 @@ use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub struct KeployArgs {
-    file: String
+    pub file: String
 }
 
 impl fmt::Display for KeployArgs {
-    // This trait requires `fmt` with this exact signature.
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.file)
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_fmt(format_args!("KeployArgs(file => \"{}\")", self.file))
     }
 }
 
@@ -21,7 +20,7 @@ impl KeployArgs {
 
     fn new_from<I, T>(args: I) -> Result<Self, String>
         where
-            I: Iterator<Item = T>,
+            I: Iterator<Item=T>,
             T: Into<OsString> + Clone, {
         let app = App::new("Keploy")
             .version("0.1.0")
@@ -38,7 +37,7 @@ impl KeployArgs {
             Ok(result) => {
                 let file = result
                     .value_of("file")
-            .       expect("This can't be None, we said it was required");
+                    .expect("This can't be None, we said it was required");
 
                 Ok(KeployArgs { file: file.to_string() })
             }
@@ -54,20 +53,24 @@ mod tests {
     #[test]
     fn test_with_no_file_argument_should_use_default_file() {
         match KeployArgs::new_from([""].iter()) {
-            Ok(result) => { assert_eq!(result, KeployArgs {
-                file: ".keployrc.json".to_string()
-            })}
-            Err(_) => { assert!(false, "Should be valid KeployArgs!")  }
+            Ok(result) => {
+                assert_eq!(result, KeployArgs {
+                    file: ".keployrc.json".to_string()
+                })
+            }
+            Err(_) => { assert!(false, "Should be valid KeployArgs!") }
         }
     }
 
     #[test]
     fn test_with_given_file_overrides_default_file() {
         match KeployArgs::new_from(["file", "another-file.json"].iter()) {
-            Ok(result) => { assert_eq!(result, KeployArgs {
-                file: "another-file.json".to_string()
-            })}
-            Err(_) => { assert!(false, "Should be valid KeployArgs!")  }
+            Ok(result) => {
+                assert_eq!(result, KeployArgs {
+                    file: "another-file.json".to_string()
+                })
+            }
+            Err(_) => { assert!(false, "Should be valid KeployArgs!") }
         }
     }
 }

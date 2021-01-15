@@ -1,11 +1,9 @@
 mod core;
 
-use crate::core::keploy_args::{KeployArgs};
+use crate::core::keploy_args::KeployArgs;
+use crate::core::transform_into_json_manifest::transform_into_json_manifest;
 
 fn main() -> Result<(), String> {
     KeployArgs::new()
-        .and_then(|keploy_args| {
-            println!("{}", keploy_args);
-            Ok(())
-        })
+        .and_then(transform_into_json_manifest)
 }
