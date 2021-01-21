@@ -1,6 +1,7 @@
 use clap::{Arg, App};
 use std::ffi::OsString;
 use std::fmt;
+use crate::core::keploy_error::KeployError;
 
 #[derive(Debug, PartialEq)]
 pub struct KeployArgs {
@@ -14,11 +15,11 @@ impl fmt::Display for KeployArgs {
 }
 
 impl KeployArgs {
-    pub fn new() -> Result<Self, String> {
+    pub fn new() -> Result<Self, KeployError> {
         Self::new_from(std::env::args_os().into_iter())
     }
 
-    fn new_from<I, T>(args: I) -> Result<Self, String>
+    fn new_from<I, T>(args: I) -> Result<Self, KeployError>
         where
             I: Iterator<Item=T>,
             T: Into<OsString> + Clone, {
@@ -41,7 +42,7 @@ impl KeployArgs {
 
                 Ok(KeployArgs { file: file.to_string() })
             }
-            Err(error) => { Err(error.to_string()) }
+            Err(error) => Err(KeployError::Unknown(error.to_string()))
         }
     }
 }
@@ -53,24 +54,20 @@ mod tests {
     #[test]
     fn test_with_no_file_argument_should_use_default_file() {
         match KeployArgs::new_from([""].iter()) {
-            Ok(result) => {
-                assert_eq!(result, KeployArgs {
-                    file: ".keployrc.json".to_string()
-                })
-            }
-            Err(_) => { assert!(false, "Should be valid KeployArgs!") }
+            Ok(result) => assert_eq!(result, KeployArgs {
+                file: ".keployrc.json".to_string()
+            }),
+            Err(_) => assert!(false, "Should be valid KeployArgs!")
         }
     }
 
     #[test]
     fn test_with_given_file_overrides_default_file() {
         match KeployArgs::new_from(["file", "another-file.json"].iter()) {
-            Ok(result) => {
-                assert_eq!(result, KeployArgs {
-                    file: "another-file.json".to_string()
-                })
-            }
-            Err(_) => { assert!(false, "Should be valid KeployArgs!") }
+            Ok(result) => assert_eq!(result, KeployArgs {
+                file: "another-file.json".to_string()
+            }),
+            Err(_) => assert!(false, "Should be valid KeployArgs!")
         }
     }
 }

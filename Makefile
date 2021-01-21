@@ -2,7 +2,13 @@ install_dependencies:
 	cargo install --path .
 
 test: install_dependencies
-	cargo test
+	cargo $@ 
+
+build:
+	cargo $@
+
+run:
+	cargo $@ 
 
 deploy:
 	@ echo "Coming soon!"

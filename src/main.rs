@@ -1,9 +1,16 @@
 mod core;
+mod utils;
 
+use crate::utils::finish_program;
 use crate::core::keploy_args::KeployArgs;
-use crate::core::transform_into_json_manifest::transform_into_json_manifest;
+use crate::core::keploy_reader::{KeployReader, KeyployFileReader};
+use crate::core::keploy_json_manifest::{KeployJsonManifest, KeployJsonManifestConverter};
 
 fn main() -> Result<(), String> {
-    KeployArgs::new()
-        .and_then(transform_into_json_manifest)
+    let result = KeployArgs::new()
+        .and_then(KeployReader::read_keployrc_file)
+        .and_then(KeployJsonManifest::from_raw_json_string);
+        // .safe_print();
+
+    finish_program(result)
 }

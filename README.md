@@ -1,11 +1,27 @@
 # Keploy
-> a tool to easily deploy your service to a Kubernetes cluster.
+> An opinionated tool for generating Istio + Kubernetes resource files from a simple json file.
 
 ## Requirements
 
 - [Rust](https://rustup.rs/)
 
 ## Usage
+
+First, create a `.keployrc.json` file:
+```json
+{
+  "name": "your-app-name",
+  "image_name": "ngnix:alpine",
+  "port": 8080
+}
+```
+
+To generate your app's Kubernetes resources, run the following command:
+```bash
+keploy generate -f .keployrc.json 
+```
+
+## Development
 
 To install project dependencies, run the following commmand:
 ```bash
