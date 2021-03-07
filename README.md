@@ -3,7 +3,7 @@
 
 ## Requirements
 
-- [Rust](https://rustup.rs/)
+- [.NET 5](https://dotnet.microsoft.com/download/dotnet)
 
 ## Usage
 

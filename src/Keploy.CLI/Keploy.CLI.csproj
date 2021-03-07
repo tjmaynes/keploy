@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <Target Name="Rename" AfterTargets="AfterBuild">
+    <Move SourceFiles="$(OUTDIR)\Keploy.CLI" DestinationFiles="$(OUTDIR)\keploy" />
+    <Message Text="Renamed executable file." Importance="high" />
+  </Target>
+
+</Project>

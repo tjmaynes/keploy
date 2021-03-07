@@ -1,14 +1,16 @@
 install_dependencies:
-	cargo install --path .
+	dotnet restore
 
-test: install_dependencies
-	cargo $@ 
+test: build
+	dotnet test
 
 build:
-	cargo $@
+	dotnet build	
 
 run:
-	cargo $@ 
+	dotnet run
 
 deploy:
 	@ echo "Coming soon!"
+
+ship_it: install_dependencies test
