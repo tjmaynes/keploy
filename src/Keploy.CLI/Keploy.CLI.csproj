@@ -5,6 +5,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+  </ItemGroup>
+
   <Target Name="Rename" AfterTargets="AfterBuild">
     <Move SourceFiles="$(OUTDIR)\Keploy.CLI" DestinationFiles="$(OUTDIR)\keploy" />
     <Message Text="Renamed executable file." Importance="high" />

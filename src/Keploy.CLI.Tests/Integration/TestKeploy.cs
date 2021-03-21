@@ -1,40 +1,62 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Xunit;
-
-class KeployArgs {
-    public KeployArgs(string name, string image, int port, int numberOfInstances) {
-        Name = name;
-        Image = image;
-        Port = port;
-        Instances = numberOfInstances;
-    }
-
-    public string Name { get; }
-    public string Image { get; }
-    public int Port { get; }
-    public int Instances { get; }
-}
+using Keploy.CLI.Core;
 
 namespace Keploy.CLI.Tests.Integration
 {
     public class TestKeploy
     {
         [Fact]
-        public async void test_whenNoFileArgumentIsGiven_shouldUseDefaultFile()
+        public async void test_whenGivenAValidKeployJsonFile_shouldCreateSingleKubernetesConfigFile()
         {
-            await IntegrationUtils.CreateKeployJsonFile(new KeployArgs(
-                name: "my-service",
-                image: "nginx:alpine",
-                port: 8080,
-                numberOfInstances: 3
-            ));
+            await IntegrationUtils.CreateKeployJsonFile(keployJsonManifest);
 
-            var keployProcess = await IntegrationUtils.RunKeployCommand();
+            var keployProcess = await IntegrationUtils.RunKeployCommand(new string[] {
+                $"--file={IntegrationUtils.keployrcFilePath}"
+             });
             Assert.Equal(0, keployProcess.ExitCode);
 
-            string expectedOutput = @"
+            string actualOutput = await IntegrationUtils.GetFileContent(IntegrationUtils.outputFilePath);
+            Assert.Equal(defaultExpectedKubernetesDeploymentConfig, actualOutput);
+
+            IntegrationUtils.Cleanup();
+        }
+
+        [Fact]
+        public async void test_whenNotGivenAKeployJsonFile_andDefaultFileExists_shouldCreateSingleKubernetesConfigFile()
+        {
+            await IntegrationUtils.CreateKeployJsonFile(keployJsonManifest);
+
+            var keployProcess = await IntegrationUtils.RunKeployCommand(new string[] {
+              ""
+            });
+            Assert.Equal(0, keployProcess.ExitCode);
+
+            string actualOutput = await IntegrationUtils.GetFileContent(IntegrationUtils.outputFilePath);
+            Assert.Equal(defaultExpectedKubernetesDeploymentConfig, actualOutput);
+
+            IntegrationUtils.Cleanup();
+        }
+
+        [Fact]
+        public async void test_whenNotGivenAKeployJsonFile_andDefaultFileDoesNotExist_shouldExitWithFileNotFoundMessage()
+        {
+            IntegrationUtils.DeleteKeployJsonFileIfExists();
+
+            var keployProcess = await IntegrationUtils.RunKeployCommand(new string[] {
+                ""
+            });
+            Assert.Equal(1, keployProcess.ExitCode);
+            Assert.Equal("File not found\nPlease provide an existing, valid Keployrc file.\n", keployProcess.StandardError.ReadToEnd());
+        }
+
+        private KeployJsonManifest keployJsonManifest = new KeployJsonManifest(
+          name: "my-service",
+          image: "nginx:alpine",
+          port: 8080,
+          numberOfInstances: 3
+        );
+
+        private string defaultExpectedKubernetesDeploymentConfig = @"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,11 +78,5 @@ spec:
         ports:
         - containerPort: 8080
             ";
-
-            string actualOutput = await IntegrationUtils.GetFileContent(IntegrationUtils.outputFilePath);
-            Assert.Equal(expectedOutput, actualOutput);
-
-            IntegrationUtils.Cleanup();
-        }
     }
 }

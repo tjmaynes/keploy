@@ -3,7 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Keploy.CLI.Core;
 
 namespace Keploy.CLI.Tests.Integration
 {
@@ -11,14 +11,6 @@ namespace Keploy.CLI.Tests.Integration
     {
         public static string keployrcFilePath = Path.Combine(Path.GetTempPath(), ".keployrc.json");
         public static string outputFilePath = Path.Combine(Path.GetTempPath(), "output.yaml");
-
-
-        public static async Task<Process> RunKeployCommand()
-        {
-            return await RunKeployCommand(new string[] {
-                $"--file={keployrcFilePath}"
-             });
-        }
 
         public static async Task<Process> RunKeployCommand(string[] args)
         {
@@ -40,7 +32,8 @@ namespace Keploy.CLI.Tests.Integration
                 FileName = keployPath,
                 Arguments = String.Join(" ", args),
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                RedirectStandardError = true
             };
 
             process.Start();
@@ -50,14 +43,18 @@ namespace Keploy.CLI.Tests.Integration
             return process;
         }
 
-        public static async Task CreateKeployJsonFile(KeployArgs args)
+        public static async Task CreateKeployJsonFile(KeployJsonManifest args)
         {
-            DeleteFileIfExists(keployrcFilePath);
+            DeleteKeployJsonFileIfExists();
 
             using FileStream createStream = File.Create(keployrcFilePath);
 
             var keployJsonFileContent = JsonSerializer.Serialize(args);
             await JsonSerializer.SerializeAsync(createStream, keployJsonFileContent);
+        }
+
+        public static void DeleteKeployJsonFileIfExists() {
+            DeleteFileIfExists(keployrcFilePath);
         }
 
         private static void DeleteFileIfExists(string path)

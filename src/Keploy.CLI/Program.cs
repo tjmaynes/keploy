@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Keploy.CLI.Builder;
 
-namespace Keploy
+namespace Keploy.CLI
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            KeployBuilder.Build().Run(args);
         }
     }
 }

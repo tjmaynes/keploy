@@ -8,7 +8,7 @@ build:
 	dotnet build	
 
 run:
-	dotnet run
+	dotnet run --project ./src/Keploy.CLI/Keploy.CLI.csproj
 
 deploy:
 	@ echo "Coming soon!"
