@@ -3,7 +3,7 @@
 
 ## Requirements
 
-- [.NET 5](https://dotnet.microsoft.com/download/dotnet)
+- [.NET Core 5](https://dotnet.microsoft.com/download/dotnet)
 
 ## Usage
 
