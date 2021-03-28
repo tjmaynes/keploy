@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Keploy.CLI\Keploy.CLI.csproj" />
+    <ProjectReference Include="..\..\src\Keploy.CLI\Keploy.CLI.csproj" />
   </ItemGroup>
 
 </Project>

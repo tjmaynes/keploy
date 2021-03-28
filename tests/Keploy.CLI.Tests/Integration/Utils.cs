@@ -14,7 +14,7 @@ namespace Keploy.CLI.Tests.Integration
 
         public static async Task<Process> RunKeployCommand(string[] args)
         {
-            var keployPath = Path.GetFullPath("../../../../Keploy.CLI/bin/Debug/net5.0/keploy");
+            var keployPath = Path.GetFullPath("../../../../../src/Keploy.CLI/bin/Debug/net5.0/keploy");
             return await RunCommand(keployPath, args);
         }
 
